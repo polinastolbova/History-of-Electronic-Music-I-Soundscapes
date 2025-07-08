@@ -1,0 +1,57 @@
+<CsoundSynthesizer>
+<CsOptions>
+-odac
+</CsOptions>
+
+<CsInstruments>
+sr = 44100
+ksmps = 32
+nchnls=2
+0dbfs=1
+
+; Simple envelope
+instr 1 
+iDur = p3 
+iFreq = p4 
+iPan = p5 
+
+aEnv linseg 0, 0.5, 1, iDur - 1, 0 
+aSig oscili 0.3 * aEnv, iFreq, 1 
+
+aL, aR pan2 aSig, iPan 
+outs aL, aR
+endin
+
+; Noise layer
+instr 2
+aNoise randh 0.1, 2
+aFilt moogladder aNoise, 800, 0.7
+aEnv linseg 0, 5, 1, p3 - 10, 1, 5, 0
+aOut = aFilt * aEnv
+outs aOut, aOut
+endin
+
+</CsInstruments>
+
+<CsScore>
+; Waveform table
+f1 0 4096 10 1
+
+; Arpeggio - sample every 6 seconds
+i1 0 6 220 0.2
+i1 6 6 277.2 0.4
+i1 12 6 329.6 0.6
+i1 18 6 440 0.8
+i1 24 6 329.6 0.6
+i1 30 6 277.2 0.4
+i1 36 6 220 0.2
+i1 42 6 164.8 0.3
+i1 48 6 220 0.5
+i1 54 6 277.2 0.6
+
+; Backing throughout
+i2 0 60
+
+e
+</CsScore>
+</CsoundSynthesizer>
