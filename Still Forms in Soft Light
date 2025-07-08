@@ -1,0 +1,72 @@
+<CsoundSynthesizer>
+<CsOptions>
+-odac ; output to device
+</CsOptions>
+
+<CsInstruments>
+sr = 44100
+ksmps = 32
+nchnls = 2
+0dbfs = 1
+
+; Autopan cushion with filter
+instr 1
+ifreq = p4
+kpfr oscili 200, 0.1, 1
+aosc vco2 0.3, ifreq
+afilt moogladder aosc, abs(kpfr)+200, 0.6
+apan poscil 0.5, 0.05, 2
+aL = afilt * (0.5 + apan)
+aR = afilt * (0.5 - apan)
+outs aL * 0.5, aR * 0.5
+endin
+
+; Atmospheric low frequency hum
+instr 2
+a1 oscillators 0.2, 60
+a2 oscillators 0.15, 65
+a3 = a1 + a2
+outs a3 * 0.4, a3 * 0.4
+endin
+
+; Glass accents
+instr 3
+irnd random 800, 2000
+aenv linen 0.2, 0.01, p3, 0.2
+a1 oscillators aenv, irnd
+aout = a1 * linseg(0, p3*0.5, 1, p3*0.5, 0)
+outs aout * 0.6, aout * 0.6
+endin
+
+; Rain
+instr 4
+anoise pinkish 0.2
+afiltr tone anoise, 700
+aenv linen 1, 2, p3, 4
+outs afiltr * aenv * 0.5, afiltr * aenv * 0.5
+endin
+</CsInstruments>
+
+<CsScore>
+f1 0 1024 10 1
+f2 0 1024 10 0.5
+
+; Sound pillow
+i1 0 60 220
+i1 10 50 330
+i1 20 40 440
+
+; Bass
+i2 0 60
+
+; Accents
+i3 5 0.4
+i3 12 0.5
+i3 25 0.3
+i3 38 0.4
+i3 49 0.4
+
+; Rain
+i4 0 60
+</CsScore>
+</CsoundSynthesizer>
