@@ -1,0 +1,49 @@
+<CsoundSynthesizer>
+<CsOptions>
+-d -n
+</CsOptions>
+<CsInstruments>
+sr = 48000
+ksmps = 64
+nchnls = 2
+0dbfs = 1
+
+giwave ftgen 1, 0, 4096, 10, 1 ; base wave
+
+; Main random impulse
+instr 1 
+ifreq random 180, 1100 
+iamp random 0.15, 0.5 
+idur random 0.6, 1.8 
+
+a1 oscili iamp, ifreq, 1 
+aenv linseg 0, 0.01, 1, idur - 0.02, 1, 0.01, 0 
+
+kpan lfo 1, random(0.05, 0.2), 1 
+aL = a1 * aenv * (1 - kpan) 
+aR = a1 * aenv * kpan 
+
+outs aL, aR
+endin
+
+; Low frequency drone
+instr 2 
+a1 oscili 0.05, 62, 1 
+a2 oscili 0.05, 64, 1 
+outs a1, a2
+endin
+
+; Random trigger generation
+instr 99
+ktrig metro random:k(0.15, 0.4)
+schedkwhen ktrig, 0, 0, 1, 0, random:k(1.0, 2.5)
+endin
+</CsInstruments>
+
+<CsScore>
+f1 0 4096 10 1
+
+i99 0 [3600*6] ; 6 hours generation
+i2 0 -1 ; drone sounds infinitely
+</CsScore>
+</CsoundSynthesizer>
